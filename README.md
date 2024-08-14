@@ -2,6 +2,11 @@
 
 This project is a simple web application that demonstrates the usage of Azure's Text-to-Speech service. It allows users to input text and convert it to speech using Microsoft's Azure Cognitive Services.
 
+Demo
+You can try out the live demo of this application at:
+https://ttsdemodut.azurewebsites.net
+Feel free to explore the features and test the text-to-speech conversion directly on the demo site!
+
 ## Features
 
 - Convert text to speech using Azure's Text-to-Speech API
@@ -29,6 +34,7 @@ Before you begin, ensure you have the following:
 1. Clone the repository:
    ```
    git clone https://github.com/thegreatgabuza/text-to-speech-demo-dut.git
+   
    ```
 
 2. Navigate to the project directory:
