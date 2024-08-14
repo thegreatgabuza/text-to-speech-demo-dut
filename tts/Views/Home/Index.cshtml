@@ -1,12 +1,9 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-
 <div class="text-center mb-4">
     <h1 class="display-4">Welcome</h1>
-   
 </div>
-
 <div class="container">
     <h2 class="text-center mb-4">Azure Text-to-Speech Demo</h2>
     <div class="row justify-content-center">
@@ -22,10 +19,10 @@
             <div id="speakerStatus" class="mt-3 alert alert-info" style="display: none;">
                 <i class="fas fa-volume-up mr-2"></i> Speaker is talking...
             </div>
+            <div id="errorMessage" class="mt-3 alert alert-danger" style="display: none;"></div>
         </div>
     </div>
 </div>
-
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://kit.fontawesome.com/your-fontawesome-kit.js"></script>
@@ -33,31 +30,54 @@
         $(document).ready(function () {
             $('#convertButton').click(function () {
                 var text = $('#inputText').val();
+                console.log("Convert button clicked. Text:", text);
                 if (text) {
+                    $('#errorMessage').hide();
                     $.ajax({
                         url: '/Home/ConvertToSpeech',
                         type: 'POST',
                         contentType: 'application/json',
                         data: JSON.stringify({ text: text }),
+                        xhrFields: {
+                            responseType: 'arraybuffer'
+                        },
                         success: function (data) {
+                            console.log("Received response from server");
                             var audio = $('#audioPlayer')[0];
                             var blob = new Blob([data], { type: 'audio/wav' });
                             var url = URL.createObjectURL(blob);
                             audio.src = url;
                             $('#audioContainer').show();
-                            
-                            audio.onplay = function() {
+
+                            audio.onplay = function () {
+                                console.log("Audio started playing");
                                 $('#speakerStatus').show();
                             };
-                            
-                            audio.onpause = audio.onended = function() {
+
+                            audio.onpause = audio.onended = function () {
+                                console.log("Audio paused or ended");
                                 $('#speakerStatus').hide();
                             };
+
+                            audio.onerror = function (e) {
+                                console.error("Audio error:", e);
+                                $('#errorMessage').text("Error playing audio: " + e.target.error.message).show();
+                            };
+
+                            audio.play().then(() => {
+                                console.log("Audio play started successfully");
+                            }).catch((error) => {
+                                console.error("Error attempting to play audio:", error);
+                                $('#errorMessage').text("Error playing audio: " + error.message).show();
+                            });
                         },
-                        error: function () {
-                            alert('Error converting text to speech.');
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            console.error("AJAX error:", textStatus, errorThrown);
+                            $('#errorMessage').text('Error converting text to speech: ' + textStatus).show();
                         }
                     });
+                } else {
+                    $('#errorMessage').text('Please enter some text to convert.').show();
                 }
             });
         });

@@ -37,30 +37,34 @@ namespace tts.Controllers
         {
             try
             {
+                _logger.LogInformation("ConvertToSpeech called with text: {Text}", model.Text);
+
                 var subscriptionKey = _configuration["AzureSpeech:SubscriptionKey"];
                 var region = _configuration["AzureSpeech:Region"];
 
                 var config = SpeechConfig.FromSubscription(subscriptionKey, region);
-                config.SpeechSynthesisVoiceName = "en-US-JennyNeural"; 
+                config.SetSpeechSynthesisOutputFormat(SpeechSynthesisOutputFormat.Riff24Khz16BitMonoPcm);
 
                 using var synthesizer = new SpeechSynthesizer(config);
                 var result = await synthesizer.SpeakTextAsync(model.Text);
 
                 if (result.Reason == ResultReason.SynthesizingAudioCompleted)
                 {
+                    _logger.LogInformation("Speech synthesis completed successfully");
                     return File(result.AudioData, "audio/wav");
                 }
                 else
                 {
-                    _logger.LogError($"Speech synthesis failed: {result.Reason}");
+                    _logger.LogError("Speech synthesis failed: {Reason}", result.Reason);
                     return BadRequest($"Speech synthesis failed: {result.Reason}");
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error converting text to speech");
-                return BadRequest("Error converting text to speech");
+                return BadRequest("Error converting text to speech: " + ex.Message);
             }
-        }
+        
+    }
     }
 }
