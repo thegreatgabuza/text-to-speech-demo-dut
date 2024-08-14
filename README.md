@@ -77,7 +77,13 @@ Before you begin, ensure you have the following:
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
-## Acknowledgments
+## Links
 
-- Microsoft Azure for providing the Text-to-Speech service
-- The ASP.NET Core team for the excellent web framework
+- https://speech.microsoft.com/
+- portal.azure.com
+- https://azure.microsoft.com/en-us/products/devops (optional)
+- https://github.com/
+
+## Documentation
+- https://learn.microsoft.com/en-us/azure/ai-services/speech-service/index-text-to-speech
+- 
